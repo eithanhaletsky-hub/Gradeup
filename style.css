@@ -18,23 +18,25 @@
 }
 
 /* ─── Base ───────────────────────────────────────────────────── */
+
 html, body,
 [data-testid="stAppViewContainer"],
 [data-testid="stMain"] {
-  background: var(--bg) !important;
-  color: var(--text) !important;
-  font-family: 'Heebo', 'Space Grotesk', sans-serif !important;
+background: var(--bg) !important;
+color: var(--text) !important;
 }
+
 
 [data-testid="stSidebar"] {
   background: var(--surface) !important;
-  border-left: 1px solid var(--border);
 }
 
 /* hide streamlit decoration */
 [data-testid="stDecoration"],
-#MainMenu, footer, header { display: none !important; }
-
+#MainMenu,
+footer {
+    display: none !important;
+}
 /* ─── Typography ─────────────────────────────────────────────── */
 h1, h2, h3, h4 {
   color: var(--text) !important;
