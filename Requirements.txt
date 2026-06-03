@@ -1,0 +1,7 @@
+streamlit
+plotly
+ddgs
+python-dotenv
+google-genai
+Pillow
+bcrypt

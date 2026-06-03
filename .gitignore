@@ -1,0 +1,15 @@
+.env
+users.json
+__pycache__/
+*.pyc
+.streamlit/secrets.toml
+*.egg-info/
+.venv/
+
+.env
+env
+
+venv
+.venv
+
+.idea
