@@ -4,4 +4,4 @@ ddgs
 python-dotenv
 google-genai
 Pillow
-bcrypt
+bcrypt==5.0.0
