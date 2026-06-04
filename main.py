@@ -3,7 +3,6 @@ Main.py — Gradeup entry point
 הרץ עם: streamlit run Main.py
 """
 import streamlit as st
-from auth import *
 
 st.set_page_config(
     page_title="Gradeup | לומדים חכם, עולים קדימה",

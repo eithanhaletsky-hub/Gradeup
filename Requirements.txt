@@ -1,7 +1,7 @@
-streamlit
-plotly
-ddgs
-python-dotenv
-google-genai
-Pillow
-bcrypt==5.0.0
+streamlit>=1.35.0
+plotly>=5.20.0
+ddgs>=1.0.0
+python-dotenv>=1.0.0
+google-genai>=1.5.0
+Pillow>=10.3.0
+bcrypt>=4.0.0
