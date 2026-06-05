@@ -23,7 +23,7 @@ def render(t):
 
         s1, s2, s3, s4 = st.columns(4)
         stats = [
-            ("6", "דפים" if lang=="he" else "Pages"),
+            ("10", "דפים" if lang=="he" else "Pages"), # עודכן מ-"6" ל-"10"
             ("∞", "AI"),
             ("3–5₪", "לחודש" if lang=="he" else "/month"),
             ("14–18", "גילאים" if lang=="he" else "Ages"),
@@ -52,7 +52,7 @@ def render(t):
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # ── All 6 features ───────────────────────────────────────────
+    # ── All N features ───────────────────────────────────────────
     st.markdown(f'<div class="sf-section-title">{t("home_features")}</div>', unsafe_allow_html=True)
 
     features = [
@@ -85,6 +85,32 @@ def render(t):
          "מעקב מצב רוח, עזרה בסטרס ממבחנים, תרגיל נשימה 4-7-8 וטיפים מעשיים" if lang=="he"
          else "Mood tracking, exam stress help, 4-7-8 breathing & practical mental health tips",
          "#a78bfa", "wellness"),
+
+        # תכונות חדשות נוספו כאן
+        ("🎴", "nav_flashcards",
+         "כרטיסיות למידה" if lang=="he" else "Flashcards",
+         "צור, למד וחזור על מושגים בקלות עם כרטיסיות למידה אינטראקטיביות." if lang=="he"
+         else "Create, study, and review concepts easily with interactive flashcards.",
+         "#ffbe0b", "flashcards"), # צבע מבליט חדש
+
+        ("🎯", "nav_goals",
+         "הגדרת יעדים אישיים" if lang=="he" else "Personal Goals",
+         "הגדר יעדים אקדמיים ואישיים, עקוב אחר ההתקדמות שלך וקבל תמיכה להשגתם." if lang=="he"
+         else "Set academic and personal goals, track your progress, and get support to achieve them.",
+         "#14b8a6", "goals"), # צבע מבליט חדש
+
+        ("📝", "nav_summarizer",
+         "כלי לסיכום טקסטים" if lang=="he" else "Text Summarizer",
+         "קצר טקסטים ארוכים במהירות באמצעות AI כדי לחסוך זמן לימוד יקר." if lang=="he"
+         else "Quickly shorten long texts using AI to save valuable study time.",
+         "#84cc16", "summarizer"), # צבע מבליט חדש
+
+        ("❓", "nav_qa_board",
+         "לוח שאלות ותשובות קהילתי" if lang=="he" else "Community Q&A Board",
+         "שאל שאלות, ענה לאחרים ושתף ידע עם קהילת Gradeup." if lang=="he"
+         else "Ask questions, answer others, and share knowledge with the Gradeup community.",
+         "#c084fc", "qa_board"), # צבע מבליט חדש
+        # סוף התכונות החדשות
 
         ("🔍", None,
          "DuckDuckGo + Gemini AI" if True else "DuckDuckGo + Gemini AI",
@@ -217,13 +243,28 @@ def render(t):
         + "</div></div>",
         unsafe_allow_html=True,
     )
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        if st.button(f"🗓️ {t('nav_schedule')}", use_container_width=True, type="primary", key="cta1"):
-            st.session_state.page = "schedule"; st.rerun()
-    with c2:
-        if st.button(f"📊 {t('nav_grades')}", use_container_width=True, type="primary", key="cta2"):
-            st.session_state.page = "grades"; st.rerun()
-    with c3:
-        if st.button(f"💆 {t('nav_wellness')}", use_container_width=True, type="primary", key="cta3"):
-            st.session_state.page = "wellness"; st.rerun()
+
+    # רשימת כל הכפתורים עבור אזור ה-CTA התחתון
+    all_cta_buttons = [
+        {"icon": "🗓️", "text_key": "nav_schedule", "page_id": "schedule"},
+        {"icon": "📚", "text_key": "nav_homework", "page_id": "homework"},
+        {"icon": "📊", "text_key": "nav_grades", "page_id": "grades"},
+        {"icon": "💆", "text_key": "nav_wellness", "page_id": "wellness"},
+        {"icon": "🎴", "text_key": "nav_flashcards", "page_id": "flashcards"},
+        {"icon": "🎯", "text_key": "nav_goals", "page_id": "goals"},
+        {"icon": "📝", "text_key": "nav_summarizer", "page_id": "summarizer"},
+        {"icon": "❓", "text_key": "nav_qa_board", "page_id": "qa_board"},
+    ]
+
+    # הצגת הכפתורים בשתי שורות: 4 כפתורים בכל שורה
+    buttons_per_row = 4
+    num_buttons = len(all_cta_buttons)
+
+    for i in range(0, num_buttons, buttons_per_row):
+        row_buttons = all_cta_buttons[i : i + buttons_per_row]
+        cols = st.columns(len(row_buttons)) # יצירת עמודות בהתאם למספר הכפתורים בשורה הנוכחית
+        for j, button_data in enumerate(row_buttons):
+            with cols[j]:
+                # שימוש ב-t(text_key) עבור הטקסט של הכפתור
+                if st.button(f"{button_data['icon']} {t(button_data['text_key'])}", use_container_width=True, type="primary", key=f"cta_btn_{button_data['page_id']}"):
+                    st.session_state.page = button_data['page_id']; st.rerun()
