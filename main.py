@@ -11,7 +11,9 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-with open("style.css") as f:
+import os as _os
+_css_path = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "style.css")
+with open(_css_path) as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 from lang import init_lang, t
@@ -56,12 +58,16 @@ with st.sidebar:
     st.markdown("---")
 
     NAV = [
-        ("nav_home",     "home"),
-        ("nav_schedule", "schedule"),
-        ("nav_homework", "homework"),
-        ("nav_earn",     "earn"),
-        ("nav_grades",   "grades"),
-        ("nav_wellness", "wellness"),
+        ("nav_home",        "home"),
+        ("nav_schedule",    "schedule"),
+        ("nav_homework",    "homework"),
+        ("nav_earn",        "earn"),
+        ("nav_grades",      "grades"),
+        ("nav_wellness",    "wellness"),
+        ("nav_flashcards",  "flashcards"),
+        ("nav_summarizer",  "summarizer"),
+        ("nav_qa",          "qa"),
+        ("nav_goals",       "goals"),
     ]
     if "page" not in st.session_state:
         st.session_state.page = "home"
@@ -110,6 +116,14 @@ elif page == "grades":
     from pages.grades import render
 elif page == "wellness":
     from pages.wellness import render
+elif page == "flashcards":
+    from pages.flashcards import render
+elif page == "summarizer":
+    from pages.summarizer import render
+elif page == "qa":
+    from pages.qa_board import render
+elif page == "goals":
+    from pages.goals import render
 else:
     from pages.home import render
 
