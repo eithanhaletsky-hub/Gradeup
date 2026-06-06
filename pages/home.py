@@ -1,4 +1,3 @@
-"""pages/home.py — דף ראשי + תמחור"""
 import streamlit as st
 
 
@@ -23,7 +22,7 @@ def render(t):
 
         s1, s2, s3, s4 = st.columns(4)
         stats = [
-            ("10", "דפים" if lang=="he" else "Pages"),
+            ("14", "דפים" if lang=="he" else "Pages"), # Changed from 10 to 14
             ("∞", "AI"),
             ("3–5₪", "לחודש" if lang=="he" else "/month"),
             ("14–18", "גילאים" if lang=="he" else "Ages"),
@@ -52,7 +51,7 @@ def render(t):
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # ── All 6 features ───────────────────────────────────────────
+    # ── All 14 features ───────────────────────────────────────────
     st.markdown(f'<div class="sf-section-title">{t("home_features")}</div>', unsafe_allow_html=True)
 
     features = [
@@ -74,7 +73,46 @@ def render(t):
          else "Log grades by subject, view trend charts, get AI analysis of strengths & weaknesses",
          "#fb923c", "grades"),
 
-        ("🔍", None,
+        # --- New Pages Start Here ---
+        ("🧮", "nav_bagrut_calculator",
+         "מחשבון בגרות" if lang=="he" else "Bagrut Calculator",
+         "מחשב ממוצע בגרות משוקלל לפי יחידות לימוד. סימולציה 'מה אם'." if lang=="he"
+         else "Calculates weighted Bagrut average by study credits. 'What if' simulation.",
+         "#fb923c", "bagrut_calculator"), # Reusing orange for calculator
+
+        ("💰", "nav_monthly_budget",
+         "תקציב חודשי" if lang=="he" else "Monthly Budget",
+         "נהל הכנסות והוצאות, גרף עוגה, יעד חיסכון וטיפ AI לחיסכון." if lang=="he"
+         else "Manage income and expenses, pie chart, savings goal, and AI saving tip.",
+         "#34d399", "monthly_budget"), # Reusing green for finance
+
+        ("🌟", "nav_scholarships_courses",
+         "מלגות וקורסים חינמיים" if lang=="he" else "Scholarships & Free Courses",
+         "מצא מלגות וקורסים בישראל ובעולם לפי תחום וגיל עם DuckDuckGo + AI." if lang=="he"
+         else "Find scholarships and free courses in Israel and worldwide by field and age with DuckDuckGo + AI.",
+         "#38bdf8", "scholarships_courses"), # Reusing blue for career/opportunities
+
+        ("💡", "nav_project_generator",
+         "מחולל פרויקטים" if lang=="he" else "Project Generator",
+         "AI מייצר רעיונות לפרויקטים עם תוכנית עבודה מפורטת ודוגמאות מהרשת." if lang=="he"
+         else "AI generates project ideas with detailed work plans and web examples.",
+         "#facc15", "project_generator"), # Reusing yellow for creativity
+
+        ("🗣️", "nav_smart_translator",
+         "מתרגם חכם" if lang=="he" else "Smart Translator",
+         "תרגום עם הסבר דקדוקי, דוגמאות בהקשר, רמת קושי ושמירה לכרטיסיות." if lang=="he"
+         else "Translation with grammar explanation, contextual examples, difficulty level, and save to flashcards.",
+         "#f472b6", "smart_translator"), # Reusing pink/purple for languages
+
+        ("➗", "nav_scientific_calculator",
+         "מחשבון מדעי" if lang=="he" else "Scientific Calculator",
+         "SymPy פותר צעד-אחר-צעד, Plotly מציג גרף, AI מסביר כל שלב." if lang=="he"
+         else "SymPy solves step-by-step, Plotly displays graph, AI explains each step.",
+         "#a78bfa", "scientific_calculator"), # Reusing purple for math/science
+        # --- New Pages End Here ---
+
+
+        ("🔍", None, # This is a general feature, not a page
          "DuckDuckGo + Gemini AI",
          "כל הדפים מחוברים לחיפוש DuckDuckGo ולמודל Gemini 2.0 Flash לתשובות עדכניות" if lang=="he"
          else "All pages connect to DuckDuckGo search & Gemini 2.0 Flash for fresh answers",
@@ -194,6 +232,7 @@ def render(t):
         + "</div></div>",
         unsafe_allow_html=True,
     )
+    # Keeping the original 5 CTA buttons for brevity and layout
     c1, c2, c3, c4, c5 = st.columns(5)
     for col, icon, label, page_id in [
         (c1, "🗓️", t("nav_schedule"),   "schedule"),
