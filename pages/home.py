@@ -49,11 +49,6 @@ PAGES = [
      "Grade / habit / saving goals with progress bars. Weekly PDF report + AI.",
      "#a78bfa","📊 מעקב","📊 Track"),
 
-    ("💼","earn","הכנסה & Ikigai","Earn & Ikigai",
-     "מבחן Ikigai, רעיונות הכנסה לפי כישרון, DuckDuckGo לחיפוש הזדמנויות, כרטיס PNG.",
-     "Ikigai test, income ideas by skill, DuckDuckGo opportunities, PNG skill card.",
-     "#f472b6","💼 קריירה וכסף","💼 Career & Money"),
-
     ("💰","budget","תקציב חודשי","Monthly Budget",
      "מעקב הכנסות/הוצאות עם גרף עוגה Plotly. pandas מנתח. AI נותן טיפ חיסכון.",
      "Income/expense tracking with Plotly pie. pandas analysis. AI saving tip.",
@@ -68,11 +63,6 @@ PAGES = [
      "AI מייצר 3 רעיונות לפרויקט שנתי עם תוכנית עבודה שלבית. DuckDuckGo + PDF.",
      "AI generates 3 annual project ideas with step-by-step plan. DuckDuckGo + PDF.",
      "#fb923c","💼 קריירה וכסף","💼 Career & Money"),
-
-    ("💆","wellness","רווחה נפשית","Wellness",
-     "מעקב מצב רוח, מד סטרס + AI תמיכה, תרגיל נשימה 4-7-8, 8 טיפים מחקריים.",
-     "Mood tracker, stress meter + AI support, 4-7-8 breathing, 8 research tips.",
-     "#a78bfa","💆 רווחה","💆 Wellness"),
 
     ("👥","qa","לוח שאלות ותשובות","Q&A Board",
      "שאל שאלות, קבל תשובות מתלמידים ומ-AI. DuckDuckGo מחפש לפני פרסום.",
