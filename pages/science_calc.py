@@ -121,7 +121,7 @@ def _plot(expr_obj, lang: str) -> go.Figure | None:
 
 
 # ── Main render ───────────────────────────────────────────────────────────
-def render():
+def render(t):
     lang = st.session_state.lang
     he   = lang == "he"
     st.markdown(
