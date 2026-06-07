@@ -9,7 +9,7 @@ FIELDS_EN = ["Math","Sciences","Coding","Design","Music","Sports",
 
 
 
-def render():
+def render(t):
     lang = st.session_state.lang
     he   = lang == "he"
     st.markdown(

@@ -46,7 +46,7 @@ def _make_pdf(subs, avg):
     pdf.cell(0,6,"gradeup.co.il",ln=True,align="C")
     return bytes(pdf.output())
 
-def render():
+def render(t):
     lang = st.session_state.lang
     he   = lang == "he"
     st.markdown('<div class="section-title">🎓 ' + ("מחשבון בגרות" if he else "Bagrut Calculator") + '</div>', unsafe_allow_html=True)

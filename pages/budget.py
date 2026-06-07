@@ -20,7 +20,7 @@ CAT_COLORS = {
     "אחר":"#94a3b8","Other":"#94a3b8",
 }
 
-def render():
+def render(t):
     lang = st.session_state.lang; he = lang=="he"
     st.markdown('<div class="section-title">💰 ' + ("תקציב חודשי" if he else "Monthly Budget") + '</div>', unsafe_allow_html=True)
 

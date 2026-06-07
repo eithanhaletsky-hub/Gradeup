@@ -55,7 +55,7 @@ def _make_pdf(content: str, title: str) -> bytes:
     return bytes(pdf.output())
 
 
-def render():
+def render(t):
     lang = st.session_state.lang
     he   = lang == "he"
     st.markdown(
