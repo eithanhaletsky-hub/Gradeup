@@ -1,246 +1,283 @@
+"""pages/home.py — דף הבית של Gradeup"""
 import streamlit as st
 
 
-def render(t):
-    lang = st.session_state.lang
+PAGES = [
+    # (icon, page_id, name_he, name_en, desc_he, desc_en, accent, group_he, group_en)
+    ("🗓️","schedule","מערכת שעות","Schedule",
+     "שיעורים, מבחנים, חוגים ואירועים אישיים בלוח שבועי Plotly. AI מנתח עומס ומאזן.",
+     "Classes, exams, clubs & events in a Plotly weekly board. AI analyzes workload.",
+     "#6ee7b7","📚 לימודים","📚 Study"),
 
-    # ── Hero ─────────────────────────────────────────────────────
-    col_hero, col_img = st.columns([3, 2], gap="large")
-    with col_hero:
+    ("📚","homework","עוזר שיעורי בית","Homework Bot",
+     "שאל שאלות, העלה תמונות של תרגילים, חפש מידע עדכני עם DuckDuckGo.",
+     "Ask questions, upload exercise photos, search fresh info with DuckDuckGo.",
+     "#38bdf8","📚 לימודים","📚 Study"),
+
+    ("🃏","flashcards","כרטיסיות לימוד","Flashcards",
+     "AI מייצר כרטיסיות מכל טקסט שתדביק. תרגל בהפוך-ובדוק, כרטיסיות שנכשלו חוזרות.",
+     "AI generates flashcards from pasted text. Flip-and-check — missed cards repeat.",
+     "#f472b6","📚 לימודים","📚 Study"),
+
+    ("📝","summarizer","מסכם חומר","Summarizer",
+     "הדבק פרק שלם — AI מחזיר נקודות / שאלות מבחן / מושגים / סיפורי. ייצוא PDF.",
+     "Paste a chapter — AI returns bullets / exam Qs / terms / narrative. PDF export.",
+     "#facc15","📚 לימודים","📚 Study"),
+
+    ("🔬","science","מחשבון מדעי","Science Calc",
+     "sympy פותר משוואות, נגזרות, אינטגרלים צעד-אחר-צעד. גרף Plotly + הסבר AI.",
+     "sympy solves equations, derivatives, integrals step-by-step. Plotly graph + AI.",
+     "#34d399","📚 לימודים","📚 Study"),
+
+    ("🌍","translator","מתרגם חכם","Translator",
+     "תרגום + הסבר דקדוקי + דוגמאות. שמור ישירות לכרטיסיות הלימוד. היסטוריה בפנדס.",
+     "Translation + grammar notes + examples. Save to flashcards. History via pandas.",
+     "#a78bfa","📚 לימודים","📚 Study"),
+
+    ("📊","grades","מעקב ציונים","Grade Tracker",
+     "הכנס ציונים לפי מקצוע — גרפי Plotly, AI מזהה מגמות וממליץ על מה להשקיע זמן.",
+     "Log grades by subject — Plotly charts, AI spots trends & recommends focus areas.",
+     "#fb923c","📊 מעקב","📊 Track"),
+
+    ("🎓","bagrut","מחשבון בגרות","Bagrut Calc",
+     "ממוצע משוקלל לפי יחידות. סימולציה 'מה אני צריך' לפי יעד. ייצוא PDF + CSV.",
+     "Weighted average by units. 'What do I need' simulation by target. PDF + CSV.",
+     "#6ee7b7","📊 מעקב","📊 Track"),
+
+    ("🎯","goals","מעקב יעדים","Goals Tracker",
+     "יעדי ציון / הרגל / חיסכון עם progress bars. דוח שבועי PDF + ניתוח AI.",
+     "Grade / habit / saving goals with progress bars. Weekly PDF report + AI.",
+     "#a78bfa","📊 מעקב","📊 Track"),
+
+    ("💼","earn","הכנסה & Ikigai","Earn & Ikigai",
+     "מבחן Ikigai, רעיונות הכנסה לפי כישרון, DuckDuckGo לחיפוש הזדמנויות, כרטיס PNG.",
+     "Ikigai test, income ideas by skill, DuckDuckGo opportunities, PNG skill card.",
+     "#f472b6","💼 קריירה וכסף","💼 Career & Money"),
+
+    ("💰","budget","תקציב חודשי","Monthly Budget",
+     "מעקב הכנסות/הוצאות עם גרף עוגה Plotly. pandas מנתח. AI נותן טיפ חיסכון.",
+     "Income/expense tracking with Plotly pie. pandas analysis. AI saving tip.",
+     "#facc15","💼 קריירה וכסף","💼 Career & Money"),
+
+    ("🏆","scholarships","מלגות וקורסים","Scholarships",
+     "DuckDuckGo מחפש מלגות וקורסים חינמיים עדכניים. AI מדרג לפי התאמה אישית.",
+     "DuckDuckGo finds current scholarships & free courses. AI ranks by personal fit.",
+     "#38bdf8","💼 קריירה וכסף","💼 Career & Money"),
+
+    ("💡","projects","מחולל פרויקטים","Projects",
+     "AI מייצר 3 רעיונות לפרויקט שנתי עם תוכנית עבודה שלבית. DuckDuckGo + PDF.",
+     "AI generates 3 annual project ideas with step-by-step plan. DuckDuckGo + PDF.",
+     "#fb923c","💼 קריירה וכסף","💼 Career & Money"),
+
+    ("💆","wellness","רווחה נפשית","Wellness",
+     "מעקב מצב רוח, מד סטרס + AI תמיכה, תרגיל נשימה 4-7-8, 8 טיפים מחקריים.",
+     "Mood tracker, stress meter + AI support, 4-7-8 breathing, 8 research tips.",
+     "#a78bfa","💆 רווחה","💆 Wellness"),
+
+    ("👥","qa","לוח שאלות ותשובות","Q&A Board",
+     "שאל שאלות, קבל תשובות מתלמידים ומ-AI. DuckDuckGo מחפש לפני פרסום.",
+     "Ask questions, get answers from peers & AI. DuckDuckGo searches before posting.",
+     "#6ee7b7","💆 רווחה","💆 Wellness"),
+]
+
+GROUPS_HE = ["📚 לימודים","📊 מעקב","💼 קריירה וכסף","💆 רווחה"]
+GROUPS_EN = ["📚 Study","📊 Track","💼 Career & Money","💆 Wellness"]
+
+LIBS_USED = [
+    ("🤖","Gemini 2.0 Flash","google-genai"),
+    ("🔍","DuckDuckGo","ddgs"),
+    ("🐼","Data Analysis","pandas"),
+    ("📄","PDF Export","fpdf2"),
+    ("🧮","Math Solver","sympy"),
+    ("🖼️","Image Process","Pillow"),
+    ("🔐","Auth","bcrypt"),
+    ("📊","Charts","plotly"),
+]
+
+
+def render():
+    lang = st.session_state.lang
+    he   = lang == "he"
+    groups = GROUPS_HE if he else GROUPS_EN
+
+    # ── Hero ──────────────────────────────────────────────────────
+    col_h, col_v = st.columns([3, 2], gap="large")
+    with col_h:
+        st.markdown('<div class="hero-title">Gradeup</div>', unsafe_allow_html=True)
         st.markdown(
-            f'<div class="sf-hero-title">Gradeup</div>'
-            f'<div class="sf-hero-sub">{t("home_hero_sub")}</div>',
+            f'<div class="hero-sub">'
+            + ("הכלי שתמיד רצית — לומד, עוקב, מרוויח, מרגיש טוב. "
+               "לתלמידי חטיבה ותיכון."
+               if he else
+               "The tool you always wanted — study, track, earn, feel good. "
+               "For middle & high school students.")
+            + "</div>",
             unsafe_allow_html=True,
         )
+
         b1, b2 = st.columns(2)
         with b1:
-            if st.button(f"🚀 {t('home_get_started')}", type="primary", use_container_width=True):
+            if st.button("🚀 " + ("בואו נתחיל" if he else "Get Started"), type="primary", use_container_width=True, key="hero_go"):
                 st.session_state.page = "schedule"; st.rerun()
         with b2:
-            if st.button(f"📚 {t('nav_homework')}", use_container_width=True):
-                st.session_state.page = "homework"; st.rerun()
+            if st.button("🎓 " + ("מחשבון בגרות" if he else "Bagrut Calc"), use_container_width=True, key="hero_bag"):
+                st.session_state.page = "bagrut"; st.rerun()
 
-        s1, s2, s3, s4 = st.columns(4)
-        stats = [
-            ("14", "דפים" if lang=="he" else "Pages"), # Changed from 10 to 14
-            ("∞", "AI"),
-            ("3–5₪", "לחודש" if lang=="he" else "/month"),
-            ("14–18", "גילאים" if lang=="he" else "Ages"),
-        ]
-        for col, (num, lbl) in zip([s1,s2,s3,s4], stats):
+        # Stats row
+        s1,s2,s3,s4 = st.columns(4)
+        for col, num, lbl in [
+            (s1, str(len(PAGES)), "דפים" if he else "Pages"),
+            (s2, "∞",             "Gemini AI"),
+            (s3, "3–5₪",         "לחודש" if he else "/month"),
+            (s4, "14–18",         "גילאים" if he else "Ages"),
+        ]:
             with col:
                 st.markdown(
-                    f'<div class="sf-stat"><div class="sf-stat-num">{num}</div>'
-                    f'<div class="sf-stat-label">{lbl}</div></div>',
+                    f'<div class="stat"><div class="stat-num">{num}</div>'
+                    f'<div class="stat-label">{lbl}</div></div>',
                     unsafe_allow_html=True,
                 )
 
-    with col_img:
+    with col_v:
         st.markdown(
-            '<div class="sf-card sf-card-glow" style="height:100%;display:flex;'
-            'flex-direction:column;justify-content:center;padding:2rem;min-height:240px">'
-            '<div style="font-size:3.5rem;text-align:center">🎓</div>'
-            '<div style="text-align:center;margin-top:1rem">'
-            '<div style="font-size:1.05rem;font-weight:700;color:#6ee7b7">'
-            + ("לתלמידי חטיבה ותיכון" if lang=="he" else "Middle & High School")
-            + '</div><div style="font-size:.88rem;color:#5a6a82;margin-top:.4rem">'
-            + ("ארגן · למד · הרוויח · תרגיש טוב" if lang=="he" else "Organize · Study · Earn · Feel good")
-            + "</div></div></div>",
+            '<div class="card card-glow" style="height:100%;display:flex;flex-direction:column;'
+            'justify-content:center;align-items:center;padding:2.5rem;min-height:230px">'
+            '<div style="font-size:4.5rem">🎓</div>'
+            '<div style="font-weight:800;color:#6ee7b7;font-size:1.15rem;margin:.8rem 0 .3rem">'
+            + ("לתלמידי חטיבה ותיכון" if he else "Middle & High School")
+            + '</div><div style="color:var(--muted);font-size:.85rem;text-align:center">'
+            + ("ארגן · למד · הרוויח · תרגיש טוב" if he else "Organize · Study · Earn · Feel good")
+            + '</div></div>',
             unsafe_allow_html=True,
         )
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # ── All 14 features ───────────────────────────────────────────
-    st.markdown(f'<div class="sf-section-title">{t("home_features")}</div>', unsafe_allow_html=True)
+    # ── Tech stack strip ──────────────────────────────────────────
+    st.markdown(
+        f'<div style="text-align:center;color:var(--muted);font-size:.75rem;margin-bottom:.5rem">'
+        + ("ספריות שבשימוש:" if he else "Libraries used:")
+        + "</div>",
+        unsafe_allow_html=True,
+    )
+    libs_html = " &nbsp; ".join(
+        f'<span style="background:#181f2e;border:1px solid #1e2a3d;border-radius:99px;'
+        f'padding:3px 12px;font-size:.74rem;color:#5a6a82">'
+        f'{icon} <b style="color:#e8edf5">{lib}</b> <span style="opacity:.6">({pkg})</span></span>'
+        for icon, lib, pkg in LIBS_USED
+    )
+    st.markdown(f'<div style="text-align:center;margin-bottom:1.5rem">{libs_html}</div>', unsafe_allow_html=True)
 
-    features = [
-        ("🗓️", "nav_schedule",
-         "מערכת שעות חכמה" if lang=="he" else "Smart Schedule",
-         "שיעורים, מבחנים, חוגים ואירועים אישיים — הכל בלוח שבועי אחד עם Plotly" if lang=="he"
-         else "Classes, exams, clubs & personal events — all in one Plotly weekly view",
-         "#6ee7b7", "schedule"),
+    # ── Pages by group ────────────────────────────────────────────
+    ni = 2 if he else 3   # name index
+    di = 4 if he else 5   # desc index
+    gi = 7 if he else 8   # group index
 
-        ("📚", "nav_homework",
-         "עוזר שיעורי בית AI" if lang=="he" else "Homework Bot",
-         "שאל שאלות, העלה תמונות של תרגילים, חפש מידע עדכני עם DuckDuckGo" if lang=="he"
-         else "Ask questions, upload exercise photos, search fresh info with DuckDuckGo",
-         "#38bdf8", "homework"),
+    for group in groups:
+        group_pages = [p for p in PAGES if p[gi] == group]
+        if not group_pages: continue
 
-        ("📊", "nav_grades",
-         "מעקב ציונים" if lang=="he" else "Grade Tracker",
-         "הכנס ציונים לפי מקצוע, ראה גרפים של מגמות, וקבל ניתוח AI על חוזקות וחולשות" if lang=="he"
-         else "Log grades by subject, view trend charts, get AI analysis of strengths & weaknesses",
-         "#fb923c", "grades"),
+        st.markdown(f'<div class="section-title">{group}</div>', unsafe_allow_html=True)
 
-        # --- New Pages Start Here ---
-        ("🧮", "nav_bagrut_calculator",
-         "מחשבון בגרות" if lang=="he" else "Bagrut Calculator",
-         "מחשב ממוצע בגרות משוקלל לפי יחידות לימוד. סימולציה 'מה אם'." if lang=="he"
-         else "Calculates weighted Bagrut average by study credits. 'What if' simulation.",
-         "#fb923c", "bagrut_calculator"), # Reusing orange for calculator
-
-        ("💰", "nav_monthly_budget",
-         "תקציב חודשי" if lang=="he" else "Monthly Budget",
-         "נהל הכנסות והוצאות, גרף עוגה, יעד חיסכון וטיפ AI לחיסכון." if lang=="he"
-         else "Manage income and expenses, pie chart, savings goal, and AI saving tip.",
-         "#34d399", "monthly_budget"), # Reusing green for finance
-
-        ("🌟", "nav_scholarships_courses",
-         "מלגות וקורסים חינמיים" if lang=="he" else "Scholarships & Free Courses",
-         "מצא מלגות וקורסים בישראל ובעולם לפי תחום וגיל עם DuckDuckGo + AI." if lang=="he"
-         else "Find scholarships and free courses in Israel and worldwide by field and age with DuckDuckGo + AI.",
-         "#38bdf8", "scholarships_courses"), # Reusing blue for career/opportunities
-
-        ("💡", "nav_project_generator",
-         "מחולל פרויקטים" if lang=="he" else "Project Generator",
-         "AI מייצר רעיונות לפרויקטים עם תוכנית עבודה מפורטת ודוגמאות מהרשת." if lang=="he"
-         else "AI generates project ideas with detailed work plans and web examples.",
-         "#facc15", "project_generator"), # Reusing yellow for creativity
-
-        ("🗣️", "nav_smart_translator",
-         "מתרגם חכם" if lang=="he" else "Smart Translator",
-         "תרגום עם הסבר דקדוקי, דוגמאות בהקשר, רמת קושי ושמירה לכרטיסיות." if lang=="he"
-         else "Translation with grammar explanation, contextual examples, difficulty level, and save to flashcards.",
-         "#f472b6", "smart_translator"), # Reusing pink/purple for languages
-
-        ("➗", "nav_scientific_calculator",
-         "מחשבון מדעי" if lang=="he" else "Scientific Calculator",
-         "SymPy פותר צעד-אחר-צעד, Plotly מציג גרף, AI מסביר כל שלב." if lang=="he"
-         else "SymPy solves step-by-step, Plotly displays graph, AI explains each step.",
-         "#a78bfa", "scientific_calculator"), # Reusing purple for math/science
-        # --- New Pages End Here ---
-
-
-        ("🔍", None, # This is a general feature, not a page
-         "DuckDuckGo + Gemini AI",
-         "כל הדפים מחוברים לחיפוש DuckDuckGo ולמודל Gemini 2.0 Flash לתשובות עדכניות" if lang=="he"
-         else "All pages connect to DuckDuckGo search & Gemini 2.0 Flash for fresh answers",
-         "#34d399", None),
-
-        ("🃏", "nav_flashcards",
-         "כרטיסיות לימוד" if lang=="he" else "Flashcards",
-         "AI מייצר כרטיסיות מכל טקסט שתדביק. תרגל במצב 'הפוך ובדוק' עם מעקב ניקוד" if lang=="he"
-         else "AI generates cards from any pasted text. Practice in flip-and-check mode with score tracking",
-         "#f472b6", "flashcards"),
-
-        ("📝", "nav_summarizer",
-         "מסכם חומר חכם" if lang=="he" else "Smart Summarizer",
-         "הדבק פרק שלם — AI מחזיר סיכום, מושגים, שאלות. ייצוא PDF עם fpdf2" if lang=="he"
-         else "Paste a full chapter — AI returns summary, terms, questions. Export to PDF with fpdf2",
-         "#facc15", "summarizer"),
-
-        ("👥", "nav_qa",
-         "לוח שאלות ותשובות" if lang=="he" else "Q&A Board",
-         "שאל שאלות בלימודים, קבל תשובות מתלמידים אחרים ומה-AI. מחובר ל-DuckDuckGo" if lang=="he"
-         else "Ask study questions, get answers from peers and AI. Connected to DuckDuckGo",
-         "#38bdf8", "qa"),
-
-        ("🎯", "nav_goals",
-         "מעקב יעדים" if lang=="he" else "Goals Tracker",
-         "הגדר יעדים (ציון, הרגל, חיסכון), עקוב אחרי התקדמות, קבל דוח שבועי PDF" if lang=="he"
-         else "Set goals (grade, habit, saving), track progress, get weekly PDF report",
-         "#a78bfa", "goals"),
-    ]
-
-    cols = st.columns(3)
-    for i, (icon, nav_key, name, desc, accent, page_id) in enumerate(features):
-        with cols[i % 3]:
-            st.markdown(
-                f'<div class="sf-feature-tile" style="border-color:{accent}22;cursor:{"pointer" if page_id else "default"}">'
-                f'<div class="sf-feature-icon">{icon}</div>'
-                f'<div class="sf-feature-name" style="color:{accent}">{name}</div>'
-                f'<div class="sf-feature-desc">{desc}</div>'
-                f'</div>',
-                unsafe_allow_html=True,
-            )
-            if page_id:
+        cols = st.columns(3)
+        for i, page in enumerate(group_pages):
+            icon, pid, accent = page[0], page[1], page[6]
+            name, desc = page[ni], page[di]
+            with cols[i % 3]:
+                st.markdown(
+                    f'<div class="page-tile" style="border-color:{accent}33">'
+                    f'<div class="tile-icon">{icon}</div>'
+                    f'<div class="tile-name" style="color:{accent}">{name}</div>'
+                    f'<div class="tile-desc">{desc}</div>'
+                    f'</div>',
+                    unsafe_allow_html=True,
+                )
                 if st.button(
-                    ("→ פתח" if lang=="he" else "→ Open"),
-                    key=f"feat_btn_{page_id}",
+                    ("→ פתח" if he else "→ Open"),
+                    key=f"hp_{pid}",
                     use_container_width=True,
                 ):
-                    st.session_state.page = page_id; st.rerun()
+                    st.session_state.page = pid; st.rerun()
 
-    st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
 
     # ── Pricing ───────────────────────────────────────────────────
-    st.markdown(f'<div class="sf-section-title">{t("home_pricing_title")}</div>', unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="section-title">{"💳 תמחור" if he else "💳 Pricing"}</div>',
+        unsafe_allow_html=True,
+    )
 
-    free_col, pro_col, _ = st.columns([1, 1, 0.4])
-    with free_col:
-        free_f = [
-            "✅ " + ("מערכת שעות + אירועים אישיים" if lang=="he" else "Schedule + personal events"),
-            "✅ " + ("עוזר AI — 10 שאלות/יום"       if lang=="he" else "AI assistant — 10 q/day"),
-            "✅ " + ("מבחן Ikigai + רעיונות הכנסה"   if lang=="he" else "Ikigai test + income ideas"),
-            "✅ " + ("מעקב ציונים (5 מקצועות)"       if lang=="he" else "Grade tracker (5 subjects)"),
-            "✅ " + ("רווחה נפשית בסיסית"             if lang=="he" else "Basic wellness"),
-            "✅ " + ("כרטיסיות לימוד (20 כרטיסיות)"  if lang=="he" else "Flashcards (20 cards)"),
-            "✅ " + ("מסכם חומר (3/יום)"              if lang=="he" else "Summarizer (3/day)"),
-            "✅ " + ("לוח Q&A — קריאה ושאילה"         if lang=="he" else "Q&A board — read & ask"),
-            "✅ " + ("מעקב 3 יעדים"                   if lang=="he" else "Track 3 goals"),
-            "❌ " + ("DuckDuckGo בכל הדפים"           if lang=="he" else "DuckDuckGo across all pages"),
-            "❌ " + ("AI ללא הגבלה"                   if lang=="he" else "Unlimited AI"),
-            "❌ " + ("ייצוא PDF"                       if lang=="he" else "PDF export"),
-            "❌ " + ("ייצוא CSV / Excel"               if lang=="he" else "CSV / Excel export"),
-        ]
+    free_items = [
+        ("✅","מערכת שעות + אירועים","Schedule + personal events"),
+        ("✅","AI — 10 שאלות/יום","AI — 10 questions/day"),
+        ("✅","כרטיסיות (20)","Flashcards (20)"),
+        ("✅","מחשבון בגרות","Bagrut calculator"),
+        ("✅","מסכם — 3/יום","Summarizer — 3/day"),
+        ("✅","מעקב 3 יעדים","Track 3 goals"),
+        ("✅","תקציב חודשי","Monthly budget"),
+        ("✅","לוח Q&A","Q&A board"),
+        ("❌","DuckDuckGo בכל הדפים","DuckDuckGo everywhere"),
+        ("❌","AI ללא הגבלה","Unlimited AI"),
+        ("❌","ייצוא PDF/CSV","PDF/CSV export"),
+    ]
+    pro_items = [
+        ("✅","הכל שבחינמי","Everything in Free"),
+        ("✅","AI ללא הגבלה","Unlimited AI"),
+        ("✅","DuckDuckGo — כל הדפים","DuckDuckGo — all pages"),
+        ("✅","ייצוא PDF — סיכומים, יעדים, בגרות","PDF export — all pages"),
+        ("✅","ייצוא CSV — ציונים, תקציב","CSV export — grades, budget"),
+        ("✅","כרטיסיות + יעדים ללא הגבלה","Unlimited flashcards & goals"),
+        ("✅","העלאת תמונות ל-AI","Image uploads to AI"),
+        ("✅","כרטיס כישרון PNG","Skill card PNG"),
+        ("✅","עדיפות תמיכה","Priority support"),
+    ]
+
+    def _price_row(mark, he_txt, en_txt):
+        txt  = he_txt if he else en_txt
+        col  = "#6ee7b7" if mark=="✅" else "#f87171"
+        return (f'<div class="price-row"><span style="color:{col}">{mark}</span> <b>{txt}</b></div>')
+
+    fc, pc, _ = st.columns([1, 1, .25])
+    with fc:
+        rows = "".join(_price_row(m,h,e) for m,h,e in free_items)
         st.markdown(
-            f'<div class="sf-price-card">'
-            f'<div style="font-size:1.1rem;font-weight:700;margin-bottom:.8rem">{t("home_free")}</div>'
-            f'<div class="sf-price-amount">0</div>'
-            f'<div class="sf-price-label">₪</div>'
-            f'<div style="margin:1rem 0">'
-            + "".join(f'<div class="sf-price-feature">{f}</div>' for f in free_f)
-            + "</div></div>",
+            f'<div class="price-card">'
+            f'<div style="font-size:1.1rem;font-weight:700;margin-bottom:.8rem">{"חינמי" if he else "Free"}</div>'
+            f'<div class="price-amount">0</div>'
+            f'<div class="price-period">₪</div>'
+            f'<div style="margin:1rem 0;text-align:right">{rows}</div></div>',
             unsafe_allow_html=True,
         )
-    with pro_col:
-        pro_f = [
-            "✅ " + ("הכל שבחינמי"                        if lang=="he" else "Everything in Free"),
-            "✅ " + ("AI ללא הגבלה בכל הדפים"             if lang=="he" else "Unlimited AI on all pages"),
-            "✅ " + ("DuckDuckGo — כל הדפים"              if lang=="he" else "DuckDuckGo — all pages"),
-            "✅ " + ("העלאת תמונות ל-AI (שיעורי בית)"     if lang=="he" else "Image uploads to AI (homework)"),
-            "✅ " + ("מעקב ציונים ללא הגבלה"              if lang=="he" else "Unlimited grade tracking"),
-            "✅ " + ("כרטיסיות ללא הגבלה + ייצוא"         if lang=="he" else "Unlimited flashcards + export"),
-            "✅ " + ("מסכם ללא הגבלה + PDF"               if lang=="he" else "Unlimited summaries + PDF"),
-            "✅ " + ("יעדים ללא הגבלה + דוח PDF שבועי"    if lang=="he" else "Unlimited goals + weekly PDF"),
-            "✅ " + ("ייצוא CSV/Excel לציונים ויעדים"      if lang=="he" else "CSV/Excel export for grades & goals"),
-            "✅ " + ("מערכת שעות PDF להורדה"               if lang=="he" else "Schedule PDF download"),
-            "✅ " + ("כרטיס כישרון PNG להורדה"             if lang=="he" else "Skill card PNG download"),
-            "✅ " + ("עדיפות תמיכה"                        if lang=="he" else "Priority support"),
-        ]
+    with pc:
+        rows = "".join(_price_row(m,h,e) for m,h,e in pro_items)
         st.markdown(
-            f'<div class="sf-price-card featured">'
-            f'<div style="font-size:1.1rem;font-weight:700;margin-bottom:.8rem">{t("home_pro")} ⭐</div>'
-            f'<div class="sf-price-amount">3–5</div>'
-            f'<div class="sf-price-label">{t("home_pro_price")}</div>'
-            f'<div style="margin:1rem 0">'
-            + "".join(f'<div class="sf-price-feature">{f}</div>' for f in pro_f)
-            + "</div></div>",
+            f'<div class="price-card pro">'
+            f'<div style="font-size:1.1rem;font-weight:700;margin-bottom:.8rem">Pro ⭐</div>'
+            f'<div class="price-amount">3–5</div>'
+            f'<div class="price-period">{"₪ לחודש" if he else "₪ / month"}</div>'
+            f'<div style="margin:1rem 0;text-align:right">{rows}</div></div>',
             unsafe_allow_html=True,
         )
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # ── CTA ───────────────────────────────────────────────────────
+    # ── Quick access ──────────────────────────────────────────────
     st.markdown(
-        f'<div class="sf-card sf-card-accent" style="text-align:center;padding:1.8rem">'
-        f'<div style="font-size:1.3rem;font-weight:800;margin-bottom:.4rem">'
-        + ("מוכן להתחיל?" if lang=="he" else "Ready to start?")
-        + f'</div><div style="color:var(--muted);font-size:.9rem">'
-        + ("בחר דף מהתפריט או לחץ על אחד מהכפתורים" if lang=="he" else "Choose a page from the sidebar or click a button below")
+        f'<div class="card card-g" style="text-align:center;padding:1.4rem">'
+        f'<div style="font-size:1.15rem;font-weight:800;margin-bottom:.4rem">'
+        + ("מוכן להתחיל? בחר דף מהתפריט הצדדי" if he else "Ready? Choose a page from the sidebar")
+        + f'</div><div style="color:var(--muted);font-size:.85rem">'
+        + ("הניווט מחולק לפי קטגוריות — לימודים / מעקב / קריירה / רווחה"
+           if he else
+           "Navigation grouped by category — Study / Track / Career / Wellness")
         + "</div></div>",
         unsafe_allow_html=True,
     )
-    # Keeping the original 5 CTA buttons for brevity and layout
-    c1, c2, c3, c4, c5 = st.columns(5)
-    for col, icon, label, page_id in [
-        (c1, "🗓️", t("nav_schedule"),   "schedule"),
-        (c2, "📚", t("nav_homework"),   "homework"),
-        (c3, "🃏", t("nav_flashcards"), "flashcards"),
-        (c4, "📝", t("nav_summarizer"), "summarizer"),
-        (c5, "🎯", t("nav_goals"),      "goals"),
-    ]:
+
+    quick = [("🗓️","schedule"),("🎓","bagrut"),("🃏","flashcards"),
+             ("🔬","science"),("💰","budget"),("🏆","scholarships")]
+    qcols = st.columns(len(quick))
+    for col, (icon, pid) in zip(qcols, quick):
         with col:
-            if st.button(f"{icon} {label}", use_container_width=True, type="primary", key=f"cta_{page_id}"):
-                st.session_state.page = page_id; st.rerun()
+            if st.button(icon, key=f"qk_{pid}", use_container_width=True):
+                st.session_state.page = pid; st.rerun()

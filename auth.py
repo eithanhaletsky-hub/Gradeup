@@ -1,248 +1,119 @@
-"""
-auth.py — מערכת הרשמה/כניסה
-• bcrypt  — הצפנת סיסמאות (hash + verify)
-• json    — אחסון משתמשים בקובץ users.json
-• אין DB חיצוני — מתאים לפרויקט MVP
-"""
-import json
-import os
-import re
-import bcrypt
-import streamlit as st
+"""auth.py — הרשמה/כניסה עם bcrypt + JSON"""
+import json, os, re, bcrypt, streamlit as st
 from datetime import datetime
 
-USERS_FILE = "users.json"
+_BASE = os.path.dirname(os.path.abspath(__file__))
 
+def _users_file() -> str:
+    try:
+        test = os.path.join(_BASE, ".write_test")
+        open(test,"w").close(); os.remove(test)
+        return os.path.join(_BASE, "users.json")
+    except OSError:
+        return "/tmp/gradeup_users.json"
 
-# ── JSON helpers ─────────────────────────────────────────────────────────
-def _load_users() -> dict:
-    if not os.path.exists(USERS_FILE):
-        return {}
-    with open(USERS_FILE, "r", encoding="utf-8") as f:
-        try:
-            return json.load(f)
-        except json.JSONDecodeError:
-            return {}
+def _load() -> dict:
+    p = _users_file()
+    if not os.path.exists(p): return {}
+    try:
+        with open(p, encoding="utf-8") as f: return json.load(f)
+    except: return {}
 
-
-def _save_users(users: dict) -> None:
-    with open(USERS_FILE, "w", encoding="utf-8") as f:
+def _save(users: dict):
+    with open(_users_file(), "w", encoding="utf-8") as f:
         json.dump(users, f, ensure_ascii=False, indent=2)
 
+def _hash(pw: str) -> str:
+    return bcrypt.hashpw(pw.encode(), bcrypt.gensalt()).decode()
 
-# ── bcrypt helpers ────────────────────────────────────────────────────────
-def _hash_password(password: str) -> str:
-    """מחזיר hash של הסיסמה כ-string"""
-    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+def _verify(pw: str, hashed: str) -> bool:
+    return bcrypt.checkpw(pw.encode(), hashed.encode())
 
+def _valid_email(e: str) -> bool:
+    return bool(re.match(r"^[\w\.-]+@[\w\.-]+\.\w{2,}$", e.strip()))
 
-def _verify_password(password: str, hashed: str) -> bool:
-    """בודק סיסמה מול hash"""
-    return bcrypt.checkpw(password.encode(), hashed.encode())
-
-
-# ── Validation ────────────────────────────────────────────────────────────
-def _validate_email(email: str) -> bool:
-    return bool(re.match(r"^[\w\.-]+@[\w\.-]+\.\w{2,}$", email.strip()))
-
-
-def _validate_password(pw: str) -> tuple[bool, str]:
-    """מחזיר (valid, error_message)"""
-    if len(pw) < 6:
-        return False, "סיסמה חייבת להכיל לפחות 6 תווים"
-    if not re.search(r"\d", pw):
-        return False, "סיסמה חייבת להכיל לפחות ספרה אחת"
+def _valid_pw(pw: str) -> tuple[bool, str]:
+    if len(pw) < 6: return False, "סיסמה חייבת להכיל לפחות 6 תווים"
+    if not re.search(r"\d", pw): return False, "סיסמה חייבת להכיל ספרה אחת לפחות"
     return True, ""
 
-
-# ── Public API ────────────────────────────────────────────────────────────
 def signup(username: str, email: str, password: str, grade: str) -> tuple[bool, str]:
-    """
-    רושם משתמש חדש.
-    מחזיר (success, message)
-    """
-    username = username.strip()
-    email    = email.strip().lower()
-
-    if not username or len(username) < 2:
-        return False, "שם משתמש חייב להכיל לפחות 2 תווים"
-    if not _validate_email(email):
-        return False, "כתובת אימייל לא תקינה"
-    pw_ok, pw_err = _validate_password(password)
-    if not pw_ok:
-        return False, pw_err
-
-    users = _load_users()
-
-    if username in users:
-        return False, "שם המשתמש כבר תפוס — בחר אחר"
-    if any(u["email"] == email for u in users.values()):
-        return False, "אימייל זה כבר רשום — נסה להתחבר"
-
-    users[username] = {
-        "email":      email,
-        "password":   _hash_password(password),
-        "grade":      grade,
-        "created_at": datetime.now().isoformat(),
-        "plan":       "free",
-    }
-    _save_users(users)
+    username = username.strip(); email = email.strip().lower()
+    if len(username) < 2: return False, "שם משתמש חייב להכיל לפחות 2 תווים"
+    if not _valid_email(email): return False, "אימייל לא תקין"
+    ok, err = _valid_pw(password)
+    if not ok: return False, err
+    users = _load()
+    if username in users: return False, "שם המשתמש תפוס"
+    if any(u["email"]==email for u in users.values()): return False, "האימייל כבר רשום"
+    users[username] = {"email":email,"password":_hash(password),"grade":grade,"plan":"free","created_at":datetime.now().isoformat()}
+    _save(users)
     return True, f"ברוך הבא, {username}! 🎉"
 
-
 def login(username: str, password: str) -> tuple[bool, str, dict]:
-    """
-    מתחבר משתמש קיים.
-    מחזיר (success, message, user_data)
-    """
-    username = username.strip()
-    users    = _load_users()
+    users = _load()
+    if username not in users: return False, "שם משתמש או סיסמה שגויים", {}
+    if not _verify(password, users[username]["password"]): return False, "שם משתמש או סיסמה שגויים", {}
+    data = {k:v for k,v in users[username].items() if k!="password"}
+    data["username"] = username
+    return True, f"שלום, {username}! 👋", data
 
-    if username not in users:
-        return False, "שם משתמש או סיסמה שגויים", {}
-
-    user = users[username]
-    if not _verify_password(password, user["password"]):
-        return False, "שם משתמש או סיסמה שגויים", {}
-
-    safe_user = {k: v for k, v in user.items() if k != "password"}
-    safe_user["username"] = username
-    return True, f"שלום, {username}! 👋", safe_user
-
+def logout():
+    st.session_state.user = None
+    st.session_state.page = "home"
 
 def is_logged_in() -> bool:
     return bool(st.session_state.get("user"))
 
-
-def get_current_user() -> dict:
+def get_user() -> dict:
     return st.session_state.get("user", {})
 
-
-def logout() -> None:
-    st.session_state.user = None
-    st.session_state.page = "home"
-
-
-# ── UI Widget ─────────────────────────────────────────────────────────────
-def auth_wall(t_fn) -> bool:
-    """
-    מציג מסך Sign Up / Log In.
-    מחזיר True אם המשתמש מחובר, False אחרת.
-    """
-    if is_logged_in():
-        return True
-
-    lang = st.session_state.get("lang", "he")
-
+def auth_wall(lang: str) -> bool:
+    if is_logged_in(): return True
+    st.markdown('<div style="max-width:420px;margin:2rem auto">', unsafe_allow_html=True)
     st.markdown(
-        '<div style="max-width:420px;margin:3rem auto">',
-        unsafe_allow_html=True,
-    )
-
-    st.markdown(
-        '<div class="sf-hero-title" style="text-align:center;font-size:2.5rem">📚 StudyFlow</div>'
-        f'<div class="sf-hero-sub" style="text-align:center">'
-        + ("הרשם או התחבר כדי להמשיך" if lang == "he" else "Sign up or log in to continue")
+        '<div style="text-align:center;font-family:Space Grotesk,sans-serif;font-size:2.5rem;'
+        'font-weight:700;background:linear-gradient(135deg,#6ee7b7,#38bdf8,#f472b6);'
+        '-webkit-background-clip:text;-webkit-text-fill-color:transparent">🎓 Gradeup</div>'
+        f'<div style="text-align:center;color:#5a6a82;margin:.5rem 0 1.5rem">'
+        + ("הרשם או התחבר כדי להמשיך" if lang=="he" else "Sign up or log in to continue")
         + "</div>",
         unsafe_allow_html=True,
     )
 
-    tab_login, tab_signup = st.tabs([
-        "🔑 " + ("כניסה" if lang == "he" else "Log In"),
-        "✨ " + ("הרשמה" if lang == "he" else "Sign Up"),
+    tab_in, tab_up = st.tabs([
+        "🔑 " + ("כניסה" if lang=="he" else "Log In"),
+        "✨ " + ("הרשמה" if lang=="he" else "Sign Up"),
     ])
 
-    # ── Login ─────────────────────────────────────────────────────
-    with tab_login:
+    with tab_in:
         with st.form("login_form"):
-            uname = st.text_input(
-                "שם משתמש" if lang == "he" else "Username",
-                placeholder="הכנס שם משתמש" if lang == "he" else "Enter username",
-            )
-            pw = st.text_input(
-                "סיסמה" if lang == "he" else "Password",
-                type="password",
-                placeholder="••••••",
-            )
-            submitted = st.form_submit_button(
-                "🔑 " + ("התחבר" if lang == "he" else "Log In"),
-                type="primary",
-                use_container_width=True,
-            )
+            u = st.text_input("שם משתמש" if lang=="he" else "Username", key="li_u")
+            p = st.text_input("סיסמה"    if lang=="he" else "Password", type="password", key="li_p")
+            if st.form_submit_button("🔑 " + ("כניסה" if lang=="he" else "Log In"), type="primary", use_container_width=True):
+                if u and p:
+                    ok, msg, data = login(u, p)
+                    if ok: st.session_state.user = data; st.rerun()
+                    else:  st.error(msg)
 
-        if submitted:
-            if not uname or not pw:
-                st.error("מלא את כל השדות" if lang == "he" else "Fill in all fields")
-            else:
-                ok, msg, user_data = login(uname, pw)
-                if ok:
-                    st.session_state.user = user_data
-                    st.success(msg)
-                    st.rerun()
-                else:
-                    st.error(msg)
-
-    # ── Sign Up ───────────────────────────────────────────────────
-    with tab_signup:
-        grades_he = ["כיתה ז׳", "כיתה ח׳", "כיתה ט׳", "כיתה י׳", "כיתה י״א", "כיתה י״ב", "אחר"]
-        grades_en = ["Grade 7", "Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12", "Other"]
-        grades    = grades_he if lang == "he" else grades_en
-
+    with tab_up:
+        grades = ["כיתה ז׳","כיתה ח׳","כיתה ט׳","כיתה י׳","כיתה י״א","כיתה י״ב"] if lang=="he" else ["Grade 7","Grade 8","Grade 9","Grade 10","Grade 11","Grade 12"]
         with st.form("signup_form"):
-            new_user  = st.text_input(
-                "שם משתמש" if lang == "he" else "Username",
-                placeholder="לפחות 2 תווים" if lang == "he" else "At least 2 characters",
-                key="su_username",
-            )
-            new_email = st.text_input(
-                "אימייל" if lang == "he" else "Email",
-                placeholder="student@example.com",
-                key="su_email",
-            )
-            new_grade = st.selectbox(
-                "כיתה" if lang == "he" else "Grade",
-                grades,
-                key="su_grade",
-            )
-            new_pw   = st.text_input(
-                "סיסמה" if lang == "he" else "Password",
-                type="password",
-                placeholder="לפחות 6 תווים + ספרה" if lang == "he" else "At least 6 chars + digit",
-                key="su_pw",
-            )
-            new_pw2  = st.text_input(
-                "אימות סיסמה" if lang == "he" else "Confirm password",
-                type="password",
-                placeholder="••••••",
-                key="su_pw2",
-            )
-            agreed = st.checkbox(
-                "אני מאשר את תנאי השימוש" if lang == "he" else "I agree to the terms of service",
-                key="su_agree",
-            )
-            submitted2 = st.form_submit_button(
-                "✨ " + ("הרשמה" if lang == "he" else "Sign Up"),
-                type="primary",
-                use_container_width=True,
-            )
-
-        if submitted2:
-            if not agreed:
-                st.error("יש לאשר את תנאי השימוש" if lang == "he" else "Please agree to the terms")
-            elif new_pw != new_pw2:
-                st.error("הסיסמאות אינן תואמות" if lang == "he" else "Passwords do not match")
-            elif not new_user or not new_email or not new_pw:
-                st.error("מלא את כל השדות" if lang == "he" else "Fill in all fields")
-            else:
-                ok, msg = signup(new_user, new_email, new_pw, new_grade)
-                if ok:
-                    # auto-login after signup
-                    _, _, user_data = login(new_user, new_pw)
-                    st.session_state.user = user_data
-                    st.success(msg)
-                    st.rerun()
-                else:
-                    st.error(msg)
+            u2 = st.text_input("שם משתמש" if lang=="he" else "Username", key="su_u")
+            e2 = st.text_input("אימייל"   if lang=="he" else "Email",    key="su_e")
+            g2 = st.selectbox("כיתה"      if lang=="he" else "Grade", grades, key="su_g")
+            p2 = st.text_input("סיסמה"    if lang=="he" else "Password", type="password", key="su_p")
+            p3 = st.text_input("אימות סיסמה" if lang=="he" else "Confirm", type="password", key="su_p2")
+            ag = st.checkbox("אני מאשר את תנאי השימוש" if lang=="he" else "I agree to the terms", key="su_ag")
+            if st.form_submit_button("✨ " + ("הרשמה" if lang=="he" else "Sign Up"), type="primary", use_container_width=True):
+                if not ag: st.error("יש לאשר תנאי שימוש")
+                elif p2!=p3: st.error("הסיסמאות לא תואמות")
+                elif u2 and e2 and p2:
+                    ok, msg = signup(u2, e2, p2, g2)
+                    if ok:
+                        _, _, data = login(u2, p2)
+                        st.session_state.user = data; st.rerun()
+                    else: st.error(msg)
 
     st.markdown("</div>", unsafe_allow_html=True)
     return False

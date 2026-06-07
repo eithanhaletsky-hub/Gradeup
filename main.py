@@ -1,126 +1,144 @@
-"""
-Main.py — Gradeup entry point
-הרץ עם: streamlit run Main.py
-"""
-import streamlit as st
+"""Main.py — Gradeup entry point | streamlit run Main.py"""
+import os, streamlit as st
 
 st.set_page_config(
-    page_title="Gradeup | לומדים חכם, עולים קדימה",
+    page_title="Gradeup | לומדים חכם",
     page_icon="🎓",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-import os as _os
-_css_path = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "style.css")
-with open(_css_path) as f:
+# ── CSS ───────────────────────────────────────────────────────────────────
+_css = os.path.join(os.path.dirname(os.path.abspath(__file__)), "style.css")
+with open(_css) as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-from lang import init_lang, t
-init_lang()
+# ── Session defaults ──────────────────────────────────────────────────────
+if "lang" not in st.session_state: st.session_state.lang = "he"
+if "page" not in st.session_state: st.session_state.page = "home"
 
-from auth import auth_wall, is_logged_in, get_current_user, logout
+lang = st.session_state.lang
 
-# Language toggle לפני login
+# ── Auth wall ─────────────────────────────────────────────────────────────
+from auth import auth_wall, is_logged_in, get_user, logout
+
 with st.sidebar:
-    if st.button(f"🌐 {t('lang_toggle')}", key="lang_btn_pre"):
-        st.session_state.lang = "en" if st.session_state.lang == "he" else "he"
+    if st.button("🌐 " + ("English" if lang=="he" else "עברית"), key="lang_pre"):
+        st.session_state.lang = "en" if lang=="he" else "he"
         st.rerun()
 
-if not auth_wall(t):
+if not auth_wall(lang):
     st.stop()
 
-user = get_current_user()
+# ── Sidebar ───────────────────────────────────────────────────────────────
+user = get_user()
+lang = st.session_state.lang   # refresh after potential rerun
 
-# ── Sidebar ────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown('<div class="sf-logo">🎓 Gradeup</div>', unsafe_allow_html=True)
-    st.markdown(f'<div class="sf-logo-sub">{t("tagline")}</div>', unsafe_allow_html=True)
-
-    # User card
-    plan_color = "#6ee7b7" if user.get("plan") == "free" else "#f472b6"
+    st.markdown('<div class="logo">🎓 Gradeup</div>', unsafe_allow_html=True)
     st.markdown(
-        f'<div class="sf-card" style="padding:.9rem;margin-bottom:.5rem">'
-        f'<div style="font-weight:700">👤 {user.get("username","")}</div>'
-        f'<div style="color:var(--muted);font-size:.8rem">{user.get("email","")}</div>'
-        f'<div style="font-size:.75rem;margin-top:.4rem">'
-        f'<span style="color:{plan_color};font-weight:700">'
-        f'{"⭐ Pro" if user.get("plan")=="pro" else "🆓 Free"}</span>'
-        f' · {user.get("grade","")}</div>'
-        f'</div>',
+        f'<div class="logo-sub">{"לומדים חכם, עולים קדימה" if lang=="he" else "Study smart, level up"}</div>',
         unsafe_allow_html=True,
     )
 
-    if st.button(f"🌐 {t('lang_toggle')}", use_container_width=True, key="lang_btn"):
-        st.session_state.lang = "en" if st.session_state.lang == "he" else "he"
+    plan_col = "#6ee7b7" if user.get("plan")=="free" else "#f472b6"
+    st.markdown(
+        f'<div class="card" style="padding:.8rem;margin-bottom:.6rem">'
+        f'<div style="font-weight:700">👤 {user.get("username","")}</div>'
+        f'<div style="color:var(--muted);font-size:.78rem">{user.get("email","")}</div>'
+        f'<div style="font-size:.73rem;margin-top:.3rem;color:{plan_col};font-weight:700">'
+        f'{"🆓 Free" if user.get("plan")=="free" else "⭐ Pro"}'
+        f' · {user.get("grade","")}</div></div>',
+        unsafe_allow_html=True,
+    )
+
+    if st.button("🌐 " + ("English" if lang=="he" else "עברית"), key="lang_btn", use_container_width=True):
+        st.session_state.lang = "en" if lang=="he" else "he"
         st.rerun()
 
     st.markdown("---")
 
+    # Grouped navigation
     NAV = [
-        ("nav_home",        "home"),
-        ("nav_schedule",    "schedule"),
-        ("nav_homework",    "homework"),
-        ("nav_earn",        "earn"),
-        ("nav_grades",      "grades"),
-        ("nav_wellness",    "wellness"),
-        ("nav_flashcards",  "flashcards"),
-        ("nav_summarizer",  "summarizer"),
-        ("nav_qa",          "qa"),
-        ("nav_goals",       "goals"),
+        ("🏠", "home",         "ראשי",             "Home",            None),
+        # Study
+        ("🗓️","schedule",      "מערכת שעות",       "Schedule",        "study"),
+        ("📚","homework",      "עוזר שיעורי בית",  "Homework Bot",    "study"),
+        ("🃏","flashcards",    "כרטיסיות",          "Flashcards",      "study"),
+        ("📝","summarizer",    "מסכם חומר",         "Summarizer",      "study"),
+        ("🔬","science",       "מחשבון מדעי",      "Science Calc",    "study"),
+        ("🌍","translator",    "מתרגם חכם",         "Translator",      "study"),
+        # Track
+        ("📊","grades",        "מעקב ציונים",      "Grade Tracker",   "track"),
+        ("🎓","bagrut",        "מחשבון בגרות",     "Bagrut Calc",     "track"),
+        ("🎯","goals",         "מעקב יעדים",       "Goals",           "track"),
+        # Career & Money
+        ("💼","earn",          "הכנסה & Ikigai",   "Earn & Ikigai",   "career"),
+        ("💰","budget",        "תקציב חודשי",      "Budget",          "career"),
+        ("🏆","scholarships",  "מלגות וקורסים",    "Scholarships",    "career"),
+        ("💡","projects",      "מחולל פרויקטים",   "Projects",        "career"),
+        # Wellness
+        ("💆","wellness",      "רווחה נפשית",      "Wellness",        "wellness"),
+        ("👥","qa",            "לוח שאלות",         "Q&A Board",       "wellness"),
     ]
-    if "page" not in st.session_state:
-        st.session_state.page = "home"
 
-    for key, page_id in NAV:
-        active = st.session_state.page == page_id
+    GROUPS = {
+        "study":   ("📚 לימודים"      if lang=="he" else "📚 Study"),
+        "track":   ("📊 מעקב"         if lang=="he" else "📊 Track"),
+        "career":  ("💼 קריירה וכסף"  if lang=="he" else "💼 Career & Money"),
+        "wellness":("💆 רווחה"        if lang=="he" else "💆 Wellness"),
+    }
+
+    current_group = None
+    for icon, pid, lbl_he, lbl_en, group in NAV:
+        lbl = lbl_he if lang=="he" else lbl_en
+
+        if group and group != current_group:
+            current_group = group
+            st.markdown(f'<div class="nav-group-label">{GROUPS[group]}</div>', unsafe_allow_html=True)
+
+        active = st.session_state.page == pid
         if st.button(
-            t(key),
+            f"{icon} {lbl}",
             use_container_width=True,
             type="primary" if active else "secondary",
-            key=f"nav_{page_id}",
+            key=f"nav_{pid}",
         ):
-            st.session_state.page = page_id
+            st.session_state.page = pid
             st.rerun()
 
     st.markdown("---")
 
     from ai_utils import api_key_widget
-    api_key_widget(t)
+    api_key_widget()
 
     st.markdown("---")
-
-    if st.button("🚪 " + ("התנתק" if st.session_state.lang == "he" else "Log Out"),
-                 use_container_width=True):
-        logout()
-        st.rerun()
+    if st.button("🚪 " + ("התנתק" if lang=="he" else "Log Out"), use_container_width=True):
+        logout(); st.rerun()
 
     st.markdown(
-        '<div style="text-align:center;color:#1e2a3d;font-size:.72rem;margin-top:1rem">'
+        '<div style="text-align:center;color:#1a2535;font-size:.68rem;margin-top:.8rem">'
         'Gradeup v1.0 © 2025 | gradeup.co.il</div>',
         unsafe_allow_html=True,
     )
 
-# ── Page routing ───────────────────────────────────────────────────────────
+# ── Page routing ──────────────────────────────────────────────────────────
 page = st.session_state.page
 
-if page == "home":
-    from pages.home import render
-elif page == "schedule":
-    from pages.schedule import render
-elif page == "homework":
-    from pages.homework import render
-elif page == "grades":
-    from pages.grades import render
-elif page == "flashcards":
-    from pages.flashcards import render
-elif page == "summarizer":
-    from pages.summarizer import render
-elif page == "qa":
-    from pages.qa_board import render
-elif page == "goals":
-    from pages.goals import render
-else:
-    from pages.home import render
+if   page == "home":         from pages.home          import render
+elif page == "schedule":     from pages.schedule      import render
+elif page == "homework":     from pages.homework      import render
+elif page == "flashcards":   from pages.flashcards    import render
+elif page == "summarizer":   from pages.summarizer    import render
+elif page == "science":      from pages.science_calc  import render
+elif page == "translator":   from pages.translator    import render
+elif page == "grades":       from pages.grades        import render
+elif page == "bagrut":       from pages.bagrut        import render
+elif page == "goals":        from pages.goals         import render
+elif page == "budget":       from pages.budget        import render
+elif page == "scholarships": from pages.scholarships  import render
+elif page == "projects":     from pages.projects      import render
+elif page == "qa":           from pages.qa_board      import render
+else:                        from pages.home          import render
 
-render(t)
+render()
