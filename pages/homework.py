@@ -64,7 +64,7 @@ def render(t):
         type=["png", "jpg", "jpeg", "webp", "bmp"],
         key="hw_img",
     )
-    pil_image = process_uploaded_image(uploaded)
+    pil_image = process_image(uploaded)
     if pil_image:
         col_i, col_info = st.columns([1, 2])
         with col_i:
