@@ -85,7 +85,7 @@ LIBS_USED = [
 ]
 
 
-def render():
+def render(t):
     lang = st.session_state.lang
     he   = lang == "he"
     groups = GROUPS_HE if he else GROUPS_EN
