@@ -142,4 +142,4 @@ elif page == "projects":     from pages.projects      import render
 elif page == "qa":           from pages.qa_board      import render
 else:                        from pages.home          import render
 
-render()
+render(t)
