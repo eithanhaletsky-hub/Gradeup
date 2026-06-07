@@ -4,6 +4,7 @@ import plotly.graph_objects as go
 from ai_utils import call_gemini, get_api_key
 import json
 from datetime import date
+from translations import t
 
 
 HOURS = [f"{h:02d}:00" for h in range(6, 23)]

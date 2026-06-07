@@ -5,6 +5,7 @@ from datetime import datetime
 from fpdf import FPDF # ספריית fpdf2 מיוצגת כאן כ-fpdf
 from ai_utils import call_gemini, get_api_key
 import io # מודול לטיפול בקלט/פלט בייטים בזיכרון
+from translations import t
 
 # הגדרות נושאים קבועים בעברית ובאנגלית
 SUBJECTS_HE = ["כללי","מתמטיקה","אנגלית","עברית","פיזיקה","כימיה",

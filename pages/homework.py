@@ -1,6 +1,7 @@
 """pages/homework.py — Homework Bot"""
 import streamlit as st
 from ai_utils import call_gemini, get_api_key, process_image, ddg_search
+from translations import t
 
 SUBJECTS_HE = ["כללי","מתמטיקה","פיזיקה","כימיה","ביולוגיה","אנגלית",
                 "עברית","היסטוריה",'ספרות','תנ"ך',"מדעי המחשב","כלכלה","גיאוגרפיה"]

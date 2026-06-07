@@ -3,6 +3,7 @@ import streamlit as st
 import json
 import random
 from ai_utils import call_gemini, get_api_key
+from translations import t
 
 # הגדרת נושאים קבועים בעברית ובאנגלית
 SUBJECTS_HE = ["כללי","מתמטיקה","אנגלית","עברית","פיזיקה","כימיה",
