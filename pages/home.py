@@ -118,8 +118,8 @@ def render():
         for col, num, lbl in [
             (s1, str(len(PAGES)), "דפים" if he else "Pages"),
             (s2, "∞",             "Gemini AI"),
-            (s3, "3–5₪",         "לחודש" if he else "/month"),
-            (s4, "14–18",         "גילאים" if he else "Ages"),
+            (s3, "4.5₪",         "לחודש" if he else "/month"),
+            (s4, "12–18",         "גילאים" if he else "Ages"),
         ]:
             with col:
                 st.markdown(
