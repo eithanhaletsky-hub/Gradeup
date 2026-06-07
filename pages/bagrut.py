@@ -5,6 +5,7 @@ import pandas as pd
 from fpdf import FPDF
 from datetime import datetime
 
+
 SUBJECTS_HE = ["מתמטיקה","אנגלית","עברית","ספרות","היסטוריה","אזרחות",
                "פיזיקה","כימיה","ביולוגיה","מדעי המחשב","גיאוגרפיה","תנ\"ך","אחר"]
 SUBJECTS_EN = ["Math","English","Hebrew","Literature","History","Civics",

@@ -300,6 +300,7 @@ def _render_ask(t, lang):
             st.error("כתוב שאלה" if lang=="he" else "Write a question")
             return
 
+
         # חיפוש אופציונלי ב-DuckDuckGo והצגת תוצאות
         ddg_results = []
         if use_ddg:

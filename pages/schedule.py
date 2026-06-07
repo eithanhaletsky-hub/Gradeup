@@ -5,6 +5,7 @@ from ai_utils import call_gemini, get_api_key
 import json
 from datetime import date
 
+
 HOURS = [f"{h:02d}:00" for h in range(6, 23)]
 
 # סוגי פריטים וצבעיהם

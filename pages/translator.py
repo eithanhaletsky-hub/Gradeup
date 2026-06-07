@@ -4,6 +4,7 @@ import pandas as pd
 from datetime import datetime
 from ai_utils import call_gemini, get_api_key
 
+
 LANGS_HE = ["עברית","אנגלית","ערבית","צרפתית","ספרדית","רוסית","גרמנית","איטלקית","יפנית","סינית"]
 LANGS_EN = ["Hebrew","English","Arabic","French","Spanish","Russian","German","Italian","Japanese","Chinese"]
 

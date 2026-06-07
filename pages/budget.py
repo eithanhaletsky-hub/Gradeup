@@ -5,6 +5,7 @@ import pandas as pd
 from datetime import datetime
 from ai_utils import call_gemini, get_api_key
 
+
 IN_CATS_HE  = ["שיעורים פרטיים","עבודה","קצבה","מתנה","אחר"]
 IN_CATS_EN  = ["Tutoring","Work","Allowance","Gift","Other"]
 OUT_CATS_HE = ["אוכל","בילויים","בגדים","תחבורה","לימודים","חיסכון","אחר"]

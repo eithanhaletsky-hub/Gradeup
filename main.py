@@ -1,6 +1,7 @@
 """Main.py — Gradeup entry point | streamlit run Main.py"""
 import os, streamlit as st
 
+
 st.set_page_config(
     page_title="Gradeup | לומדים חכם",
     page_icon="🎓",

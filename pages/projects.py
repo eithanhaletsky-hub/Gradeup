@@ -4,6 +4,7 @@ from datetime import datetime
 from fpdf import FPDF
 from ai_utils import call_gemini, get_api_key, ddg_search
 
+
 INTERESTS_HE = ["מדעים","תכנות","עיצוב","מוזיקה","כלכלה","ספורט",
                 "חברה","סביבה","בריאות","אמנות","היסטוריה","שפות"]
 INTERESTS_EN = ["Sciences","Coding","Design","Music","Economics","Sports",

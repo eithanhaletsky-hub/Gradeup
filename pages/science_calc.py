@@ -4,6 +4,8 @@ import plotly.graph_objects as go
 from datetime import datetime
 from ai_utils import call_gemini, get_api_key
 
+
+
 # ── sympy import ─────────────────────────────────────────────────────────
 try:
     import sympy as sp

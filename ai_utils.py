@@ -39,7 +39,7 @@ def ddg_search(query: str, max_results: int = 5) -> list[dict]:
         try:
             from ddgs import DDGS
         except ImportError:
-            from duckduckgo_search import DDGS
+            from ddgs import DDGS
         with DDGS() as d:
             return list(d.text(query, max_results=max_results))
     except Exception as e:
