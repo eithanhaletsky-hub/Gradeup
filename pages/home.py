@@ -118,7 +118,7 @@ def render(t):
         for col, num, lbl in [
             (s1, str(len(PAGES)), "דפים" if he else "Pages"),
             (s2, "∞",             "Gemini AI"),
-            (s3, "4.5₪",         "לחודש" if he else "/month"),
+            (s3, "2₪",         "לחודש" if he else "/month"),
             (s4, "12–18",         "גילאים" if he else "Ages"),
         ]:
             with col:
@@ -243,7 +243,7 @@ def render(t):
         st.markdown(
             f'<div class="price-card pro">'
             f'<div style="font-size:1.1rem;font-weight:700;margin-bottom:.8rem">Pro ⭐</div>'
-            f'<div class="price-amount">4.5</div>'
+            f'<div class="price-amount">2</div>'
             f'<div class="price-period">{"₪ לחודש" if he else "₪ / month"}</div>'
             f'<div style="margin:1rem 0;text-align:right">{rows}</div></div>',
             unsafe_allow_html=True,
