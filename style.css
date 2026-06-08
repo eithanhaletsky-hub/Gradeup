@@ -31,6 +31,11 @@ html, body,
   border-left: 1px solid var(--border);
 }
 
+[data-testid="stDecoration"], #MainMenu, footer {
+    display: none !important;
+}
+
+
 /* ── Typography ─────────────────────────────────── */
 h1,h2,h3,h4 { color:var(--text) !important; font-family:'Space Grotesk',sans-serif !important; }
 
