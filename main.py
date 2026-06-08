@@ -74,12 +74,10 @@ with st.sidebar:
         ("🎓","bagrut",        "מחשבון בגרות",     "Bagrut Calc",     "track"),
         ("🎯","goals",         "מעקב יעדים",       "Goals",           "track"),
         # Career & Money
-        ("💼","earn",          "הכנסה & Ikigai",   "Earn & Ikigai",   "career"),
         ("💰","budget",        "תקציב חודשי",      "Budget",          "career"),
         ("🏆","scholarships",  "מלגות וקורסים",    "Scholarships",    "career"),
         ("💡","projects",      "מחולל פרויקטים",   "Projects",        "career"),
         # Wellness
-        ("💆","wellness",      "רווחה נפשית",      "Wellness",        "wellness"),
         ("👥","qa",            "לוח שאלות",         "Q&A Board",       "wellness"),
     ]
 
@@ -141,5 +139,11 @@ elif page == "scholarships": from pages.scholarships  import render
 elif page == "projects":     from pages.projects      import render
 elif page == "qa":           from pages.qa_board      import render
 else:                        from pages.home          import render
+
+import inspect
+import streamlit as st
+
+st.write(render.__module__)
+st.write(inspect.signature(render))
 
 render(t)
