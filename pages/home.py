@@ -263,3 +263,39 @@ def render(t):
         + "</div></div>",
         unsafe_allow_html=True,
     )
+
+    # ── How to get Gemini API Key ──────────────────────────────────────────
+    st.markdown("<br>", unsafe_allow_html=True) # רווח קטן לפני הכותרת החדשה
+    st.markdown(
+        f'<div class="section-title">{"🔑 איך להשיג Gemini API Key?" if he else "🔑 How to get a Gemini API Key?"}</div>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        f'<div class="card card-g" style="text-align:center;padding:1.4rem">'
+        f'<div style="font-size:1.05rem;font-weight:600;margin-bottom:.4rem">'
+        + ("כדי ליהנות מיכולות ה-AI המתקדמות של Gradeup, מומלץ ליצור מפתח API אישי עבור Gemini."
+           if he else
+           "To enjoy Gradeup's advanced AI capabilities, it's recommended to create a personal Gemini API Key.")
+        + f'</div><div style="color:var(--muted);font-size:.85rem;margin-bottom:.8rem">'
+        + ("התהליך מהיר וקל, ומאפשר לך לשלוט בשימוש במשאבים שלך."
+           if he else
+           "The process is quick and easy, allowing you to control your resource usage.")
+        + f'</div>'
+        + (f'<a href="https://aistudio.google.com/app/apikey" target="_blank" style="text-decoration:none;">'
+           f'<button style="background-color:#4285F4;color:white;border:none;padding:10px 20px;'
+           f'border-radius:5px;cursor:pointer;font-weight:bold;font-size:1rem;">'
+           f'{"צור את המפתח שלך כאן!" if he else "Create your Key here!"}'
+           f'</button></a>'
+           if he else
+           f'<a href="https://aistudio.google.com/app/apikey" target="_blank" style="text-decoration:none;">'
+           f'<button style="background-color:#4285F4;color:white;border:none;padding:10px 20px;'
+           f'border-radius:5px;cursor:pointer;font-weight:bold;font-size:1rem;">'
+           f'{"Create your Key here!" if he else "צור את המפתח שלך כאן!"}'
+           f'</button></a>') # הכפתור והקישור
+        + f'<div style="color:var(--muted);font-size:.75rem;margin-top:.8rem">'
+        + ("וודא שאתה שומר את המפתח שלך בבטחה ואל תשתף אותו עם אחרים."
+           if he else
+           "Ensure you keep your key secure and do not share it with others.")
+        + "</div></div>",
+        unsafe_allow_html=True,
+    )
