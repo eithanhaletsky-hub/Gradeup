@@ -140,10 +140,4 @@ elif page == "projects":     from pages.projects      import render
 elif page == "qa":           from pages.qa_board      import render
 else:                        from pages.home          import render
 
-import inspect
-import streamlit as st
-
-st.write(render.__module__)
-st.write(inspect.signature(render))
-
 render(t)

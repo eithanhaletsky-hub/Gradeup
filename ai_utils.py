@@ -1,4 +1,3 @@
-"""ai_utils.py — Gemini + DuckDuckGo + Pillow utilities"""
 import os, io
 import streamlit as st
 from dotenv import load_dotenv

@@ -263,11 +263,3 @@ def render(t):
         + "</div></div>",
         unsafe_allow_html=True,
     )
-
-    quick = [("🗓️","schedule"),("🎓","bagrut"),("🃏","flashcards"),
-             ("🔬","science"),("💰","budget"),("🏆","scholarships")]
-    qcols = st.columns(len(quick))
-    for col, (icon, pid) in zip(qcols, quick):
-        with col:
-            if st.button(icon, key=f"qk_{pid}", use_container_width=True):
-                st.session_state.page = pid; st.rerun()
